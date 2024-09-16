@@ -2,8 +2,10 @@
 import Database from 'better-sqlite3';
 import * as sqliteVec from "sqlite-vec";
 
-export const getDatabase = (path: string) => {
+export const getDatabase = async (path: string) => {
   const db = new Database(path);
+  db.pragma('journal_mode = WAL');
+
   // db.pragma('journal_mode = WAL');
   sqliteVec.load(db);
   const { vec_version } = db.prepare("select vec_version() as vec_version;").get() as any;
@@ -14,7 +16,7 @@ export const getDatabase = (path: string) => {
 
 export default async function Home() {
   try {
-    const db = getDatabase(":memory:");
+    const db = await getDatabase(":memory:");
 
     console.log("db", db);
   
